@@ -1,0 +1,21 @@
+data:
+  n_points: 1000
+  start_time: "2024-01-01 00:00:00"
+  freq: "1min"
+  random_seed: 42
+  output_path: data/sample_sensor_data.csv
+
+detectors:
+  zscore_threshold: 3.0
+  iqr_multiplier: 1.5
+  isolation_forest:
+    contamination: 0.05
+    n_estimators: 100
+    random_state: 42
+  dbscan:
+    eps: 0.5
+    min_samples: 5
+
+dashboard:
+  page_title: "Industrial Anomaly Detection"
+  default_detector: "Isolation Forest"

@@ -1,0 +1,32 @@
+name: CI
+on:
+  push:
+    branches: [main, develop]
+  pull_request:
+    branches: [main]
+jobs:
+  test:
+    runs-on: ubuntu-latest
+    steps:
+      - uses: actions/checkout@v4
+      - uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+      - name: Cache pip
+        uses: actions/cache@v4
+        with:
+          path: ~/.cache/pip
+          key: ${{ runner.os }}-pip-${{ hashFiles('requirements.txt') }}
+      - name: Install dependencies
+        run: pip install -r requirements.txt pytest pytest-cov
+      - name: Run tests
+        run: pytest tests/ -v --tb=short
+      - name: Smoke test generator
+        run: |
+          python -c "
+          import sys; sys.path.insert(0, 'src')
+          from data_generator import generate_sample_data
+          df = generate_sample_data(n_points=100)
+          assert len(df) == 100
+          print('Smoke test passed:', df.shape)
+          "
