@@ -311,3 +311,45 @@ class AnomalyDetector:
             "mean_score": round(float(result["score"].mean()), 4),
             "max_score": round(float(result["score"].max()), 4),
         }
+
+    def multi_channel_detect(
+        self,
+        df: pd.DataFrame,
+        method: str,
+        channels: Optional[list[str]] = None,
+    ) -> pd.DataFrame:
+        """
+        Run detection on multiple sensor channels in one call.
+
+        Parameters
+        ----------
+        df : pd.DataFrame
+            Each column is a sensor channel time-series.
+        method : str
+            Detection method to apply to every channel.
+        channels : list[str] | None
+            Subset of column names to process. Defaults to all numeric columns.
+
+        Returns
+        -------
+        pd.DataFrame
+            Index matches df. Per-channel ``<name>_anomaly`` and ``<name>_score``
+            columns, plus ``any_anomaly`` (True if any channel flagged) and
+            ``max_score`` (worst score across all channels at each timestamp).
+        """
+        cols = channels or list(df.select_dtypes(include="number").columns)
+        if not cols:
+            raise ValueError("No numeric columns found in df.")
+
+        results: dict[str, pd.Series] = {}
+        for col in cols:
+            res = self.detect(df[col], method)
+            results[f"{col}_anomaly"] = pd.Series(res["anomaly"].values, index=df.index)
+            results[f"{col}_score"] = pd.Series(res["score"].values, index=df.index)
+
+        out = pd.DataFrame(results, index=df.index)
+        anomaly_cols = [c for c in out.columns if c.endswith("_anomaly")]
+        score_cols = [c for c in out.columns if c.endswith("_score")]
+        out["any_anomaly"] = out[anomaly_cols].any(axis=1)
+        out["max_score"] = out[score_cols].max(axis=1)
+        return out
