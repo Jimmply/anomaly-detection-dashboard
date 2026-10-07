@@ -6,6 +6,7 @@
 [![Plotly](https://img.shields.io/badge/Plotly-5.18%2B-3F4F75?style=flat-square&logo=plotly&logoColor=white)](https://plotly.com/)
 [![License: MIT](https://img.shields.io/badge/License-MIT-22c55e?style=flat-square)](LICENSE)
 [![Code style: black](https://img.shields.io/badge/code%20style-black-000000?style=flat-square)](https://github.com/psf/black)
+[![CI](https://github.com/Jimmply/anomaly-detection-dashboard/actions/workflows/ci.yml/badge.svg)](https://github.com/Jimmply/anomaly-detection-dashboard/actions/workflows/ci.yml)
 
 An interactive Streamlit dashboard for real-time anomaly detection on industrial sensor time-series data. Upload your own CSV or generate realistic synthetic sensor data, configure four different detection algorithms through an intuitive UI, and export flagged events as a report — all without writing a single line of code.
 
